@@ -18,7 +18,7 @@ import com.example.catalog_service_ch3.config.DataConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJdbcTest // светится красным и не предлагает импорт
+@DataJdbcTest
 @Import(DataConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // это тоже светися красным и не предлагает
 @ActiveProfiles("integration") // <-- что означает integration
@@ -33,7 +33,7 @@ public class BookRepositoryJdbcTests {
     @Test
     void findAllBooks() { // <-- этот метод
 
-        var book1 = Book.of("1234561235", "Title", "Author", 12.90);
+        var book1 = Book.of("1234561235", "Title", "Author", 12.90, "Polarsophia");
         jdbcAggregateTemplate.insert(book1);
         Optional<Book> actualBook = bookRepository.findByIsbn("1234561235");
 
