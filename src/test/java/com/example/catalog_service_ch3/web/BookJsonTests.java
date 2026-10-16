@@ -8,30 +8,40 @@ import org.springframework.boot.test.json.JacksonTester;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.time.Instant;
 
-import com.example.catalog_service_ch3.domain.Book; 
+import com.example.catalog_service_ch3.domain.Book;
 
-@JsonTest 
+@JsonTest
 public class BookJsonTests {
 
     @Autowired
     private JacksonTester<Book> json;
 
+    @Test
+    void testSerialize() throws IOException {
 
-    @Test 
-    void testSerialize() throws IOException{
+        var now = Instant.now();
 
-        var book = new Book("1234567890", "Title", "Author", 9.90);
-        var jsonContent = json.write(book);  // <-- write сериализует её в JSON
+        var book = new Book(394L, "1234567890", "Title", "Author", 9.90, now, now, 21);
+        var jsonContent = json.write(book); // <-- write сериализует её в JSON
+        assertThat(jsonContent).extractingJsonPathNumberValue("@.id")
+                .isEqualTo(book.id().intValue());
         assertThat(jsonContent).extractingJsonPathStringValue("@.isbn")
-                   .isEqualTo(book.isbn());
+                .isEqualTo(book.isbn());
         assertThat(jsonContent).extractingJsonPathStringValue("@.title")
-                   .isEqualTo(book.title());
-        assertThat(jsonContent).extractingJsonPathStringValue("@.author") 
-                  .isEqualTo(book.author());
+                .isEqualTo(book.title());
+        assertThat(jsonContent).extractingJsonPathStringValue("@.author")
+                .isEqualTo(book.author());
         assertThat(jsonContent).extractingJsonPathNumberValue("@.price")
-                  .isEqualTo(book.price());
+                .isEqualTo(book.price());
+        assertThat(jsonContent).extractingJsonPathStringValue("@.createdDate")
+                .isEqualTo(book.createdDate().toString());
+        assertThat(jsonContent).extractingJsonPathStringValue("@.lastModifiedDate")
+                .isEqualTo(book.lastModifiedDate().toString());
+        assertThat(jsonContent).extractingJsonPathNumberValue("@.version")
+                .isEqualTo(book.version());
 
     }
-    
+
 }

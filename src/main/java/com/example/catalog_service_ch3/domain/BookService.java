@@ -2,9 +2,7 @@ package com.example.catalog_service_ch3.domain;
 
 import org.springframework.stereotype.Service;
 
-
-
-@Service 
+@Service
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -13,36 +11,42 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public Iterable<Book> viewBookList(){
+    public Iterable<Book> viewBookList() {
         return bookRepository.findAll();
     }
 
-    public Book viewBookDetails(String isbn){
+    public Book viewBookDetails(String isbn) {
         return bookRepository.findByIsbn(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
     }
 
-    public Book addBookToCatalog(Book book){
-        if (bookRepository.existsByIsbn(book.isbn())){
+    public Book addBookToCatalog(Book book) {
+        if (bookRepository.existsByIsbn(book.isbn())) {
             throw new BookAlreadyExistsException(book.isbn());
         }
-          return bookRepository.save(book);
+        return bookRepository.save(book);
     }
 
-    public void removeBookFromCatalog(String isbn){
+    public void removeBookFromCatalog(String isbn) {
         bookRepository.deleteByIsbn(isbn);
     }
 
-    public Book editBookDetails(String isbn, Book book){
-        return bookRepository.findByIsbn(isbn) 
-                         .map(existingBook -> {
-                            var bookToUpdate = new Book( 
-                                existingBook.isbn(), 
-                                     book.title(), 
-                                     book.author(), 
-                                     book.price());
+    public Book editBookDetails(String isbn, Book book) {
+        return bookRepository.findByIsbn(isbn)
+                .map(existingBook -> {
+                    var bookToUpdate = new Book(
 
-                            return bookRepository.save(bookToUpdate);
-                         }).orElseGet(() -> addBookToCatalog(book));
+                            existingBook.id(),
+                            existingBook.isbn(),
+                            book.title(),
+                            book.author(),
+                            book.price(),
+                            book.publisher(),
+                            existingBook.createdDate(),
+                            existingBook.lastModifiedDate(),
+                            existingBook.version());
+
+                    return bookRepository.save(bookToUpdate);
+                }).orElseGet(() -> addBookToCatalog(book));
     }
-    
+
 }
