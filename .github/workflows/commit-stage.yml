@@ -26,7 +26,7 @@ jobs:
           cache: gradle
 
       - name: Code vulnerability scanning
-        uses: anchore/scan-action@v3
+        uses: anchore/scan-action@v6
         id: scan
         with:
           path: "${{ github.workspace }}"
@@ -72,7 +72,7 @@ jobs:
             --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
 
       - name: OCI image vulnerability scanning
-        uses: anchore/scan-action@v3
+        uses: anchore/scan-action@v6
         id: scan
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
