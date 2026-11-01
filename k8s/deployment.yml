@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment # исправлено: было Depolyment
+metadata:
+  name: catalog-service
+  labels:
+    app: catalog-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: catalog-service
+  template: # исправлено: вынесено на уровень spec (не внутри selector)
+    metadata:
+      labels:
+        app: catalog-service
+    spec:
+      containers:
+        - name: catalog-service
+          image:
+            catalog_service_ch3 # <-- ИМЯ ОБРАЗА. Сейчас указан локальный образ с хоста.
+            #     В Minikube он НЕ виден автоматически — см. пояснение ниже.
+          imagePullPolicy: IfNotPresent # исправлено: было IfNoPresent
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 6"]
+          ports:
+            - containerPort: 9091 # исправлено: было 9001; синхронизировано с server.port в application.yml
+          env:
+            - name: BPL_JVM_THREAD_COUNT
+              value: "50"
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://polar-postgres/polardb_catalog
+            - name: SPRING_PROFILES_ACTIVE
+              value: testdata

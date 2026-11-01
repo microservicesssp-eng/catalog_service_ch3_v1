@@ -18,6 +18,22 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
+      # --- НОВЫЙ ШАГ: Установка kubeconform через универсальный экшен ---
+      - name: Setup Kubernetes tools
+        uses: yokawasa/action-setup-kube-tools@v0.13.1
+        with:
+          kubeconform: "0.7.0" # Указываем версию (можно 'latest', но лучше фиксировать)
+      # -----------------------------------------------------------------
+
+      # --- НОВЫЙ ШАГ: Валидация манифестов ---
+      - name: Validate Kubernetes manifests
+        run: |
+          # Запускаем kubeconform в строгом режиме для папки k8s
+          # -strict запрещает неизвестные поля (аналог --strict из kubeval)
+          # -summary выводит краткую сводку
+          kubeconform -strict -summary k8s/
+      # ----------------------------------------
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:

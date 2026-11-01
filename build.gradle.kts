@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
 
     java
@@ -84,6 +86,12 @@ implementation("org.springframework.cloud:spring-cloud-starter-config")
 //         mavenBom("org.testcontainers:testcontainers-bom:${extra["testcontainersVersion"]}")
 //     }
 // }
+
+tasks.named<BootBuildImage>("bootBuildImage") {
+    imageName.set(project.name)
+    environment.put("BP_JVM_VERSION", "17")
+
+}
 
 tasks.withType<Test> {
 	useJUnitPlatform()
